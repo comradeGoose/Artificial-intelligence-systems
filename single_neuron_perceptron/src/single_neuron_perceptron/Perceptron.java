@@ -99,7 +99,7 @@ public class Perceptron {
         }
 
         int result = training(p);
-        System.out.println("- - -");
+        System.out.println(p);
         for (int i = 0; i < training_patterns.length; i++) {
             enter_neuron = java.util.Arrays.copyOf(training_patterns[i], training_patterns[i].length - 1);
             out_calculation();
