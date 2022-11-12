@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Artificial_Intelligence_Systems.iml" filepath="$PROJECT_DIR$/.idea/Artificial_Intelligence_Systems.iml" />
+      <module fileurl="file://$PROJECT_DIR$/multilayer_perceptron/multilayer_perceptron.iml" filepath="$PROJECT_DIR$/multilayer_perceptron/multilayer_perceptron.iml" />
+      <module fileurl="file://$PROJECT_DIR$/single_neuron_perceptron/single_neuron_perceptron.iml" filepath="$PROJECT_DIR$/single_neuron_perceptron/single_neuron_perceptron.iml" />
+    </modules>
+  </component>
+</project>
