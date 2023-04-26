@@ -164,7 +164,7 @@ public class Main extends Application {
   }
 
   private void moveSnake(Stage primaryStage) {
-    // создаем объект типа Point, который содержит координаты головы змейки.
+    // создаем объект типа Point, который содержит координаты начала (головы) змейки.
     Point head = snake.get(0);
 
     // проверяет значение направления змейки
@@ -235,6 +235,8 @@ public class Main extends Application {
           snake.add(new Point(WIDTH / 2, HEIGHT / 2));
         }
       }
+      startTime = System.currentTimeMillis();
+      foodCounter = 0;
       food = createFood();
       direction = 1;
       isGameOver = false;
