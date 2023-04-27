@@ -10,10 +10,12 @@ public class Board implements Runnable{
     this.BOARD_WIDTH = board_width;
   }
 
-  private Snake snake = new Snake(BOARD_HEIGHT, BOARD_WIDTH);
-  private Food food = new Food(BOARD_HEIGHT, BOARD_WIDTH);
+
 
   public void run() {
+    Snake snake = new Snake(BOARD_HEIGHT, BOARD_WIDTH);
+    Food food = new Food(BOARD_HEIGHT, BOARD_WIDTH);
+    System.out.println("BOARD ::: BOARD_HEIGHT : " + BOARD_HEIGHT + " ; BOARD_WIDTH : " +  BOARD_WIDTH);
     while(true) {
       // здесь можно обновлять состояние игрового поля, например, вызывать методы движения змеи
       // и проверять, если змея съела еду, то генерировать новую еду

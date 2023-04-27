@@ -10,9 +10,7 @@ public class RandomNumber {
 
   public static int getInt(int min, int maxExclusive) {
     if (min < 0 || maxExclusive < 0 || maxExclusive <= min) {
-      System.out.println("min : " + min + " ; maxExclusive : " + maxExclusive);
-//      throw new IllegalArgumentException("min and maxExclusive must be positive and maxExclusive must be greater than min");
-      return 0;
+      throw new IllegalArgumentException("min and maxExclusive must be positive and maxExclusive must be greater than min");
     }
     return random.get().nextInt(maxExclusive - min) + min;
   }

@@ -15,6 +15,7 @@ public class Snake {
   public Snake(int board_height, int board_width) {
     this.BOARD_HEIGHT = board_height;
     this.BOARD_WIDTH = board_width;
+    System.out.println("Snake ::: BOARD_HEIGHT : " + BOARD_HEIGHT + " ; BOARD_WIDTH : " +  BOARD_WIDTH);
   }
 
   public void move() {
