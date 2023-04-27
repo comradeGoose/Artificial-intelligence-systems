@@ -31,6 +31,8 @@ public class Main extends Application {
 
   private int START_LEN_SNAKE = 4;
 
+  // SnakeBrain SnakeBrain = new SnakeBrain();
+
   // направление движения змейки
   private int direction = 1;
 
@@ -157,6 +159,7 @@ public class Main extends Application {
     primaryStage.show();
   }
 
+  // метод Point, который создает еду в случаной точке
   private Point createFood() {
     int x = random.nextInt(WIDTH);
     int y = random.nextInt(HEIGHT);
@@ -164,10 +167,12 @@ public class Main extends Application {
   }
 
   private void moveSnake(Stage primaryStage) {
-    // создаем объект типа Point, который содержит координаты начала (головы) змейки.
+    // объект типа Point, который содержит координаты начала (головы) змейки
     Point head = snake.get(0);
 
-    // проверяет значение направления змейки
+    // int recommendedDirection = SnakeBrain.getRecommendedDirection();
+
+    // проверяем значение направления змейки
     switch (direction) {
       case 0 -> snake.add(0, new Point(head.x, head.y - 1));
       case 1 -> snake.add(0, new Point(head.x + 1, head.y));
@@ -196,7 +201,7 @@ public class Main extends Application {
         break;
       }
     }
-
+    // проверяем, совпадает ли длина змейки с размером поля
     if (snake.size() == WIDTH * HEIGHT) {
       isGameOver = true;
       primaryStage.setScene(gameOverScene);
@@ -222,7 +227,7 @@ public class Main extends Application {
 
     Label gameOverLabel = new Label("Game Over");
     gameOverLabel.setTextFill(Color.RED);
-    gameOverLabel.setFont(new Font("Arial", 48));
+    gameOverLabel.setFont(new Font("Arial", TILE_SIZE * 5));
 
     Button restartButton = new Button("Restart");
     restartButton.setOnAction(event -> {
@@ -246,23 +251,5 @@ public class Main extends Application {
     gameOverRoot.getChildren().addAll(gameOverLabel, restartButton);
 
     return new Scene(gameOverRoot, WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
-  }
-
-  private static class Point {
-    int x;
-    int y;
-
-    public Point(int x, int y) {
-      this.x = x;
-      this.y = y;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (obj instanceof Point other) {
-        return x == other.x && y == other.y;
-      }
-      return false;
-    }
   }
 }
