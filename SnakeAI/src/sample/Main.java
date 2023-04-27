@@ -31,13 +31,19 @@ public class Main extends Application {
 
   private int START_LEN_SNAKE = 4;
 
+  private float SPEED_SNAKE = 1;
+
   // SnakeBrain SnakeBrain = new SnakeBrain();
+
+  Board board = new Board(HEIGHT, WIDTH);
 
   // направление движения змейки
   private int direction = 1;
 
-  long startTime = System.currentTimeMillis();
-  int foodCounter = 0;
+  private long startTime = System.currentTimeMillis();
+  private int foodCounter = 0;
+  private int score = 0;
+  private int stamina = 100;
 
   // список, который хранит все точки, занимаемые змейкой
   private final List<Point> snake = new ArrayList<>();
@@ -66,6 +72,8 @@ public class Main extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    Thread boardThread = new Thread(board);
+    boardThread.start();
     // создает корневой узел для группы элементов
     Group root = new Group();
 
@@ -88,11 +96,23 @@ public class Main extends Application {
     foodLabel.setFont(Font.font("Arial", 18));
     foodLabel.setTextFill(Color.BLUE);
 
+    Label lifetimeLabel = new Label("Stamina: 0");
+    lifetimeLabel.setFont(Font.font("Arial", 18));
+    lifetimeLabel.setTextFill(Color.BLUE);
+
+    Label snakeSpeedLabel = new Label("Speed: 0");
+    snakeSpeedLabel.setFont(Font.font("Arial", 18));
+    snakeSpeedLabel.setTextFill(Color.BLUE);
+
+    Label scoreLabel = new Label("Score: 0");
+    scoreLabel.setFont(Font.font("Arial", 18));
+    scoreLabel.setTextFill(Color.GOLD);
+
     // создает контейнер для элементов управления с отступами
     VBox vbox = new VBox(10);
     vbox.setAlignment(Pos.TOP_LEFT);
     vbox.setPadding(new Insets(10));
-    vbox.getChildren().addAll(timeLabel, foodLabel);
+    vbox.getChildren().addAll(timeLabel, foodLabel, lifetimeLabel, snakeSpeedLabel, scoreLabel);
 
     // добавляет контейнер в корневой узел
     root.getChildren().add(vbox);
@@ -117,6 +137,19 @@ public class Main extends Application {
       if (event.getCode() == KeyCode.LEFT && direction != 1) {
         direction = 3;
       }
+      if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.EQUALS ) {
+        SPEED_SNAKE++;
+        if (SPEED_SNAKE >= 10) {
+          SPEED_SNAKE = 10;
+        }
+
+      }
+      if (event.getCode() == KeyCode.MINUS ) {
+        SPEED_SNAKE--;
+        if (SPEED_SNAKE <= 0) {
+          SPEED_SNAKE = 1;
+        }
+      }
     });
 
     // задаем начальную длину змейки
@@ -140,7 +173,7 @@ public class Main extends Application {
           return;
         }
 
-        if (now - lastUpdate >= 100_000_000) {
+        if (now - lastUpdate >= 100_000_000 * (1/SPEED_SNAKE)) {
           lastUpdate = now;
           moveSnake(primaryStage);
           draw();
@@ -150,8 +183,18 @@ public class Main extends Application {
         long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
         timeLabel.setText("Time: " + elapsedTime);
 
+        // выносливость
+        lifetimeLabel.setText("Stamina: " + stamina);
+
+        // скорость змейки
+        snakeSpeedLabel.setText("Speed: " + SPEED_SNAKE);
+
         // обновляем количество подобранной еды
         foodLabel.setText("Food: " + foodCounter);
+
+        // счет для определения лучшей змейки
+        setScore(foodCounter, elapsedTime, stamina);
+        scoreLabel.setText("Score: " + getScore());
       }
     }.start();
 
@@ -159,11 +202,23 @@ public class Main extends Application {
     primaryStage.show();
   }
 
-  // метод Point, который создает еду в случаной точке
+  // метод Point, который создает еду в случаной точке отличной от позиции змеи
   private Point createFood() {
-    int x = random.nextInt(WIDTH);
-    int y = random.nextInt(HEIGHT);
-    return new Point(x, y);
+    Point newFood;
+    do {
+      int x = random.nextInt(WIDTH);
+      int y = random.nextInt(HEIGHT);
+      newFood = new Point(x, y);
+    } while (snake.contains(newFood));
+    return newFood;
+  }
+
+  private void setScore(int food, long lifetime, int stamina) {
+    score = (int) (food * 100 + lifetime + stamina);
+  }
+
+  public int getScore() {
+    return score;
   }
 
   private void moveSnake(Stage primaryStage) {
@@ -174,21 +229,22 @@ public class Main extends Application {
 
     // проверяем значение направления змейки
     switch (direction) {
-      case 0 -> snake.add(0, new Point(head.x, head.y - 1));
-      case 1 -> snake.add(0, new Point(head.x + 1, head.y));
-      case 2 -> snake.add(0, new Point(head.x, head.y + 1));
-      case 3 -> snake.add(0, new Point(head.x - 1, head.y));
+      case 0 -> snake.add(0, new Point(head.getX(), head.getY() - 1));
+      case 1 -> snake.add(0, new Point(head.getX() + 1, head.getY()));
+      case 2 -> snake.add(0, new Point(head.getX(), head.getY() + 1));
+      case 3 -> snake.add(0, new Point(head.getX() - 1, head.getY()));
     }
 
     // проверяем, совпадает ли координата головы змейки с координатой еды
     if (snake.get(0).equals(food)) {
       food = createFood();
       foodCounter++;
+      stamina += 50;
     } else {
       snake.remove(snake.size() - 1);
     }
     // проверяем, вышла ли змейка за границы игрового поля.
-    if (snake.get(0).x < 0 || snake.get(0).x >= WIDTH || snake.get(0).y < 0 || snake.get(0).y >= HEIGHT) {
+    if (snake.get(0).getX() < 0 || snake.get(0).getX() >= WIDTH || snake.get(0).getY() < 0 || snake.get(0).getY() >= HEIGHT) {
       isGameOver = true;
       primaryStage.setScene(gameOverScene);
     }
@@ -206,6 +262,7 @@ public class Main extends Application {
       isGameOver = true;
       primaryStage.setScene(gameOverScene);
     }
+    stamina--;
   }
 
   private void draw() {
@@ -213,11 +270,11 @@ public class Main extends Application {
 
     graphics.setFill(Color.GREEN);
     for (Point p : snake) {
-      graphics.fillRect(p.x * TILE_SIZE, p.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      graphics.fillRect(p.getX() * TILE_SIZE, p.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 
     graphics.setFill(Color.RED);
-    graphics.fillRect(food.x * TILE_SIZE, food.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    graphics.fillRect(food.getX() * TILE_SIZE, food.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 
   private Scene createGameOverScene(Stage primaryStage) {
@@ -244,6 +301,7 @@ public class Main extends Application {
       foodCounter = 0;
       food = createFood();
       direction = 1;
+      stamina = 100;
       isGameOver = false;
       primaryStage.setScene(gameScene);
     });
