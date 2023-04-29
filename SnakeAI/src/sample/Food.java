@@ -1,31 +1,31 @@
 package sample;
 
-import java.util.Random;
-
 public class Food {
 
-  private int BOARD_HEIGHT;
-  private int BOARD_WIDTH;
+  private Point position;
 
-  private Point foodPosition;
-
-  private final RandomNumber random = new RandomNumber();
-
-  public Food(int board_height, int board_width) {
-    this.BOARD_HEIGHT = board_height;
-    this.BOARD_WIDTH = board_width;
-    System.out.println("Food ::: BOARD_HEIGHT : " + BOARD_HEIGHT + " ; BOARD_WIDTH : " +  BOARD_WIDTH);
+  public Food(int boardHeight, int boardWidth) {
+    position = createFood(boardHeight, boardWidth);
   }
 
-  public Point createFood(int WIDTH, int HEIGHT) {
-    int x = random.getInt(0, BOARD_WIDTH);
-    int y = random.getInt(0, BOARD_HEIGHT);
-    foodPosition = new Point(x, y);
-    System.out.println("еда появилась");
-    return foodPosition;
+  // Создает случайную позицию еды на игровом поле
+  public Point createFood(int boardHeight, int boardWidth) {
+    int x = (int) (Math.random() * boardWidth);
+    int y = (int) (Math.random() * boardHeight);
+    return new Point(x, y);
   }
 
-  public Point getFoodPosition() {
-    return foodPosition;
+  // Возвращает позицию еды
+  public Point getPosition() {
+    return position;
   }
+
+  public int getX() {
+    return getPosition().getX();
+  }
+
+  public int getY() {
+    return getPosition().getY();
+  }
+
 }

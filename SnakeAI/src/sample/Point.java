@@ -47,4 +47,9 @@ public class Point {
     Point pos = (Point) other;
     return x == pos.x && y == pos.y;
   }
+
+  public boolean contains(Point pos, int width, int height) {
+    return pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < width && pos.getY() < height;
+  }
+
 }

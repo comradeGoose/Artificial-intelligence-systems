@@ -1,34 +1,43 @@
 package sample;
 
-public class Board implements Runnable{
+import java.util.Random;
 
-  private int BOARD_HEIGHT;
-  private int BOARD_WIDTH;
+public class Board implements Runnable {
 
-  public Board(int board_height, int board_width) {
-    this.BOARD_HEIGHT = board_height;
-    this.BOARD_WIDTH = board_width;
+
+  private final int height;
+  private final int width;
+  private final Snake snake;
+
+  public Board(int height, int width) {
+    this.height = height;
+    this.width = width;
+    this.snake = new Snake(height, width);
   }
 
+  public Snake getSnake() {
+    return snake;
+  }
 
-
+  @Override
   public void run() {
-    Snake snake = new Snake(BOARD_HEIGHT, BOARD_WIDTH);
-    Food food = new Food(BOARD_HEIGHT, BOARD_WIDTH);
-    System.out.println("BOARD ::: BOARD_HEIGHT : " + BOARD_HEIGHT + " ; BOARD_WIDTH : " +  BOARD_WIDTH);
-    while(true) {
-      // здесь можно обновлять состояние игрового поля, например, вызывать методы движения змеи
-      // и проверять, если змея съела еду, то генерировать новую еду
-      food.createFood(BOARD_WIDTH, BOARD_HEIGHT);
-      snake.setSnakeSize(4);
-      snake.move();
-
-      if (snake.checkCollision(food.getFoodPosition())) {
-        do {
-          food.createFood(BOARD_WIDTH, BOARD_HEIGHT);
-        } while (snake.entry(food.getFoodPosition()));
+    while (snake.IsAlive) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
-      System.out.println("x : " + food.getFoodPosition().getX() + " ; " + " y : " + food.getFoodPosition().getY());
+      snake.move();
+      snake.eat();
+
+      if (snake.checkCollision(height, width)) {
+        snake.IsAlive = false;
+      }
+      // if snake.getFood().getPosition(), width, height
+//      if () {
+//        //food.setPosition(getRandomPosition());
+//      }
     }
   }
+
 }
