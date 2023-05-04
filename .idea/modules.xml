@@ -3,7 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Artificial_Intelligence_Systems.iml" filepath="$PROJECT_DIR$/.idea/Artificial_Intelligence_Systems.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SnakeAI/SnakeAI.iml" filepath="$PROJECT_DIR$/SnakeAI/SnakeAI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backpropagation/backpropagation.iml" filepath="$PROJECT_DIR$/backpropagation/backpropagation.iml" />
       <module fileurl="file://$PROJECT_DIR$/multilayer_perceptron/multilayer_perceptron.iml" filepath="$PROJECT_DIR$/multilayer_perceptron/multilayer_perceptron.iml" />
+      <module fileurl="file://$PROJECT_DIR$/perceptron arabicnumerals/perceptron arabicnumerals.iml" filepath="$PROJECT_DIR$/perceptron arabicnumerals/perceptron arabicnumerals.iml" />
+      <module fileurl="file://$PROJECT_DIR$/perceptron_arabic_numerals/perceptron_arabic_numerals.iml" filepath="$PROJECT_DIR$/perceptron_arabic_numerals/perceptron_arabic_numerals.iml" />
       <module fileurl="file://$PROJECT_DIR$/single_neuron_perceptron/single_neuron_perceptron.iml" filepath="$PROJECT_DIR$/single_neuron_perceptron/single_neuron_perceptron.iml" />
     </modules>
   </component>

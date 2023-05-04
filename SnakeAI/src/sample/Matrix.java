@@ -100,11 +100,4 @@ public class Matrix {
     }
     return new Matrix(column);
   }
-
-  public static LinkedList<Float> attachOne(LinkedList<Float> values) {
-    LinkedList<Float> result = new LinkedList<>(values);
-    result.add(1f);
-    return result;
-  }
-
 }

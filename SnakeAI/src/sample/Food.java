@@ -8,11 +8,13 @@ public class Food {
     position = createFood(boardHeight, boardWidth);
   }
 
+
   // Создает случайную позицию еды на игровом поле
   public Point createFood(int boardHeight, int boardWidth) {
-    int x = (int) (Math.random() * boardWidth);
-    int y = (int) (Math.random() * boardHeight);
+    int x = RandomNumber.getInt(0, boardWidth);
+    int y = RandomNumber.getInt(0, boardHeight);
     return new Point(x, y);
+//    return new Point(25, 15);
   }
 
   // Возвращает позицию еды

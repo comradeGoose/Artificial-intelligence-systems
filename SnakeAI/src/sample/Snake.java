@@ -2,25 +2,28 @@ package sample;
 
 import com.sun.javafx.tk.PrintPipeline;
 
+import java.io.PipedInputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
 
 public class Snake {
 
   private final int _SNAKE_START_LEN_ = 4;
-  private final int _SNAKE_STAMINA_ = 100;
-  private final int _SNAKE_STAMINA_RECOVERY_ = 50;
+  private final int _SNAKE_STAMINA_ = 200;
+  private final int _SNAKE_STAMINA_RECOVERY_ = 100;
 
 
   private int width;
   private int height;
   private SnakeBrain snakeBrain;
-  private Point direction;
+  private Point direction; //  = Point.RIGHT
   private Food food;
 
   public boolean IsAlive = true;
-  public int Lifetime = 0;
+  public long startTime = System.currentTimeMillis();
+  public long Lifetime = 0;
   public int FoodCounter = 0;
   public int Stamina = _SNAKE_STAMINA_;
   public int score = 0;
@@ -28,11 +31,20 @@ public class Snake {
   private LinkedList<Point> body;
 
   public Point Head() {
-    return body.get(0);
+    return body.getFirst();
+  }
+
+  public SnakeBrain getSnakeBrain() {
+    return snakeBrain;
   }
 
   public double Score() {
-    return FoodCounter * 100 + Lifetime + Stamina;
+
+    return Math.pow(Lifetime, 2) * Math.pow(2, FoodCounter);
+
+//    return Lifetime * Lifetime * Math.pow (2, Math.min (FoodCounter, 10)) * Math.max (1, FoodCounter - 9);
+
+//    return FoodCounter * 100 + Lifetime + Stamina;
   }
 
   public Food getFood() {
@@ -48,22 +60,42 @@ public class Snake {
     this.width = boardWidth;
     this.height = boardHeight;
 
-    int startX = boardWidth / 2;
-    int startY = boardHeight / 2;
+    int startX = RandomNumber.getInt(0, boardWidth); //boardWidth / 2;
+    int startY = RandomNumber.getInt(0, boardHeight); // boardHeight / 2;
 
     this.body = new LinkedList<Point>();
     this.snakeBrain = SnakeBrain.random();
 
     this.food = new Food(boardHeight, boardWidth);
+
     for (int i = 0; i < _SNAKE_START_LEN_; i++) {
-      this.body.add(new Point(startX - i, startY));
+      this.body.add(new Point(startX, startY)); //startX - i
     }
-
-//    this.direction = Point.FOUR_DIRECTIONS.get(RandomNumber.getInt(0, 3));
-
   }
 
-  public void move() {
+  public Snake(int boardHeight, int boardWidth, SnakeBrain snakeBrain) {
+
+    this.width = boardWidth;
+    this.height = boardHeight;
+
+    int startX = RandomNumber.getInt(0, boardWidth); //boardWidth / 2;
+    int startY = RandomNumber.getInt(0, boardHeight); //boardHeight / 2;
+
+    this.body = new LinkedList<Point>();
+    this.snakeBrain = snakeBrain;
+
+    this.food = new Food(boardHeight, boardWidth);
+
+    for (int i = 0; i < _SNAKE_START_LEN_; i++) {
+      this.body.add(new Point(startX, startY)); // startX - i
+    }
+  }
+
+  public boolean move() {
+    if (!IsAlive) {
+      return false;
+    }
+    Lifetime = (System.currentTimeMillis() - startTime) / 10;
 
     LinkedList<Float> observations = gatherObservations();
     LinkedList<Float> actions = snakeBrain.think(observations);
@@ -73,14 +105,12 @@ public class Snake {
       if (actions.get(i) > actions.get(maxIndex)) {
         maxIndex = i;
       }
-      System.out.println(i + " ::: "+ actions.get(maxIndex));
     }
-
 
     setDirection(Point.FOUR_DIRECTIONS.get(maxIndex));
 
     Point head = body.get(0);
-    if (Point.UP.equals(direction)) {
+    if (Point.UP.equals(direction)) { //direction
       head = new Point(head.getX(), head.getY() - 1);
     } else if (Point.DOWN.equals(direction)) {
       head = new Point(head.getX(), head.getY() + 1);
@@ -91,15 +121,28 @@ public class Snake {
     }
     body.addFirst(head);
     body.removeLast();
+    eat();
+
+    if (checkCollision(height, width)) {
+      IsAlive = false;
+      return false;
+    }
+    Stamina--;
+    if (Stamina <= 0) {
+      IsAlive = false;
+      return false;
+    }
+    return true;
   }
 
-  public boolean eat() {
-    Point head = Head();
-    if (head.getX() == getFood().getX() && head.getY() == getFood().getY()) {
-      body.addLast(body.getLast());
-      return true;
+  public void eat() {
+    if (Head().getX() == getFood().getX() && Head().getY() == getFood().getY()) {
+      FoodCounter++;
+      Stamina += _SNAKE_STAMINA_RECOVERY_;
+      body.add(new Point(body.getLast().getX(), body.getLast().getY()));
+//      body.addLast();
+      food.createFood(height, width);
     }
-    return false;
   }
 
   public void setDirection(Point direction) {
@@ -136,6 +179,9 @@ public class Snake {
   // обратную величину текущего шага (1 / i), что означает, что стена находится на расстоянии i от головы змейки.
   private float inverseDistanceToWall(Point dir) {
     for (int i = 1; true; i++) {
+      if (!dir.contains(Head().add(dir.multiply(i)), width, height)) {
+        return 0;
+      }
       if (dir.contains(Head().add(dir.multiply(i)), width, height)) {
         return 1f / i;
       }

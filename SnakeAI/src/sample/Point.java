@@ -14,6 +14,8 @@ public class Point {
   public static final Point UP_LEFT = new Point(-1, -1);
 
   public static final List<Point> FOUR_DIRECTIONS = Arrays.asList(UP, RIGHT, DOWN, LEFT);
+  public static final List<String> FOUR_DIRECTIONS_NAME = Arrays.asList("UP", "RIGHT", "DOWN", "LEFT");
+
   public static final List<Point> EIGHT_DIRECTIONS = Arrays.asList(UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT);
 
   private final int x;
