@@ -11,8 +11,10 @@ import java.util.concurrent.BrokenBarrierException;
 public class Snake {
 
   private final int _SNAKE_START_LEN_ = 4;
-  private final int _SNAKE_STAMINA_ = 200;
+  private final int _SNAKE_STAMINA_ = 400;
   private final int _SNAKE_STAMINA_RECOVERY_ = 100;
+
+  private int speed = 1;
 
 
   private int width;
@@ -23,7 +25,7 @@ public class Snake {
 
   public boolean IsAlive = true;
   public long startTime = System.currentTimeMillis();
-  public long Lifetime = 0;
+  public int Lifetime = 0;
   public int FoodCounter = 0;
   public int Stamina = _SNAKE_STAMINA_;
   public int score = 0;
@@ -40,11 +42,19 @@ public class Snake {
 
   public double Score() {
 
+    if (Lifetime  == 0 || (Lifetime  == 0 && FoodCounter == 0)) return 1;
+
     return Math.pow(Lifetime, 2) * Math.pow(2, FoodCounter);
 
-//    return Lifetime * Lifetime * Math.pow (2, Math.min (FoodCounter, 10)) * Math.max (1, FoodCounter - 9);
-
 //    return FoodCounter * 100 + Lifetime + Stamina;
+  }
+
+  public int getFoodCount() {
+    return FoodCounter;
+  }
+
+  public int getLifetime() {
+    return Lifetime;
   }
 
   public Food getFood() {
@@ -55,10 +65,11 @@ public class Snake {
     return body;
   }
 
-  public Snake(int boardHeight, int boardWidth) {
+  public Snake(int boardHeight, int boardWidth, int speed) {
 
     this.width = boardWidth;
     this.height = boardHeight;
+    this.speed = speed;
 
     int startX = RandomNumber.getInt(0, boardWidth); //boardWidth / 2;
     int startY = RandomNumber.getInt(0, boardHeight); // boardHeight / 2;
@@ -73,10 +84,11 @@ public class Snake {
     }
   }
 
-  public Snake(int boardHeight, int boardWidth, SnakeBrain snakeBrain) {
+  public Snake(int boardHeight, int boardWidth,int speed, SnakeBrain snakeBrain) {
 
     this.width = boardWidth;
     this.height = boardHeight;
+    this.speed = speed;
 
     int startX = RandomNumber.getInt(0, boardWidth); //boardWidth / 2;
     int startY = RandomNumber.getInt(0, boardHeight); //boardHeight / 2;
@@ -95,7 +107,7 @@ public class Snake {
     if (!IsAlive) {
       return false;
     }
-    Lifetime = (System.currentTimeMillis() - startTime) / 10;
+    Lifetime = (int) ((System.currentTimeMillis() - startTime) / (1000 / speed));
 
     LinkedList<Float> observations = gatherObservations();
     LinkedList<Float> actions = snakeBrain.think(observations);

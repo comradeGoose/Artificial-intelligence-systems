@@ -8,7 +8,7 @@ public class SnakeBrain {
   public static final int INPUT_SIZE = 24;
   public static final int HIDDEN_SIZE = 12;
   public static final int OUTPUT_SIZE = 4;
-  public static final float MUTATION_CHANCE = 0.02f;
+  public static final float MUTATION_CHANCE = 0.05f;
 
   private Matrix inputToHidden;
   private Matrix hiddenToOutput;
@@ -53,12 +53,12 @@ public class SnakeBrain {
 
     // Повторяем процесс вычисления суммы, но уже используя список hiddensWith1 и матрицу весов hiddenToOutput
     LinkedList<Float> outputs = hiddenToOutput.multiply(inputToHidden.VectorToColumnMatrix(hiddensWith1)) .columnMatrixToVector();
+
     return outputs;
   }
 
   private float sigmoid(float x) {
     return 1 / (1 + (float) Math.exp(-x));
-//    return Math.max(0, x);
   }
 
   public static SnakeBrain cross(SnakeBrain mom, SnakeBrain dad) {

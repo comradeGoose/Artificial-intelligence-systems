@@ -1,6 +1,8 @@
 package sample;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class Matrix {
@@ -76,6 +78,7 @@ public class Matrix {
         }
         if (rng.nextFloat() < mutationChance) {
           cells[i][j] = Math.max(-1, Math.min(1, cells[i][j] + (float) rng.nextGaussian()));
+//          cells[i][j] = RandomNumber.getFloat(-1, 1);
         }
       }
     }
@@ -84,6 +87,7 @@ public class Matrix {
 
   public LinkedList<Float> columnMatrixToVector() {
     LinkedList<Float> vector = new LinkedList<Float>();
+//    List<float[]> name = Arrays.stream(Cells).toList();
     for (float[] row : Cells) {
       for (float value : row) {
         vector.add(value);

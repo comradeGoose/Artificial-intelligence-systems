@@ -4,18 +4,21 @@ public class Board {
 
   private final int height;
   private final int width;
+  private int speed = 1;
   private Snake snake;
 
-  public Board(int height, int width) {
+  public Board(int height, int width, int speed) {
     this.height = height;
     this.width = width;
-    this.snake = new Snake(height, width);
+    this.speed = speed;
+    this.snake = new Snake(height, width, speed);
   }
 
-  public Board(int height, int width, SnakeBrain snakeBrain) {
+  public Board(int height, int width, int speed, SnakeBrain snakeBrain) {
     this.height = height;
     this.width = width;
-    this.snake = new Snake(height, width, snakeBrain);
+    this.speed = speed;
+    this.snake = new Snake(height, width, speed, snakeBrain);
   }
 
   public Snake getSnake() {

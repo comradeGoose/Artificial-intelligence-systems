@@ -4,71 +4,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Selection {
-//
-//  private final double totalScore;
-//  private final List<Snake> snakes;
-//
-//  public Selection(List<Board> boards) {
-//    this.totalScore = boards.stream()
-//            .mapToDouble(board -> board.getSnake().Score())
-//            .sum();
-//    this.snakes = sortSnakes(boards);
-//  }
-//
-//  public List<SnakeBrain> keepTopN(int count) {
-//    return snakes.stream()
-//            .map(snake -> snake.getSnakeBrain())
-//            .limit(count)
-//            .collect(Collectors.toList());
-//  }
-//
-//  public List<Snake> sortSnakes(List<Board> boards) {
-//    return boards.stream()
-//            .map(Board::getSnake)
-//            .sorted(Comparator.comparingDouble(Snake::Score).reversed()) //
-//            .collect(Collectors.toList());
-//  }
-//
-//
-//  private SnakeBrain chooseParent() {
-//    double seed = RandomNumber.getDouble(0, totalScore);
-//    for (Snake snake : snakes) {
-//      seed -= snake.Score();
-//      if (seed < 0) {
-//        return snake.getSnakeBrain();
-//      }
-//    }
-//    throw new IllegalStateException("No matching snake found");
-//  }
-//
-//
-//  public SnakeBrain spawn() {
-//    SnakeBrain mom = chooseParent();
-//    SnakeBrain dad = chooseParent();
-//    return SnakeBrain.cross(mom, dad);
-//  }
-//
-//  public List<SnakeBrain> createPopulation() {
-//    List<SnakeBrain> newPopulation = new ArrayList<>();
-//    for (int i = 0; i < snakes.size(); i++) {
-//      SnakeBrain offspring = spawn();
-//      newPopulation.add(offspring);
-//    }
-//    return newPopulation;
-//  }
 
   private final List<Pair<SnakeBrain, Double>> scores;
   private final double totalScore;
+  private final List<Snake> snakes;
+
 
   public Selection(List<Snake> snakes) {
     scores = snakes.stream()
             .map(snake -> new Pair<>(snake.getSnakeBrain(), snake.Score()))
             .sorted(Collections.reverseOrder(Comparator.comparing(Pair::getRight)))
             .collect(Collectors.toList());
+
+    this.snakes = snakes;
+
     totalScore = scores.stream().mapToDouble(Pair::getRight).sum();
   }
 
-  public List<SnakeBrain> keepTopN(int count) {
+  public List<SnakeBrain> choseN(int count) {
     return scores.stream()
             .map(Pair::getLeft)
             .limit(count)
@@ -79,6 +32,24 @@ public class Selection {
     SnakeBrain mom = chooseParent();
     SnakeBrain dad = chooseParent();
     return SnakeBrain.cross(mom, dad);
+  }
+
+  private SnakeBrain chooseMom(List<Snake> snakes) {
+    Optional<Snake> maxFoodCountSnake = snakes.stream()
+            .filter(snake -> snake.getFoodCount() >= 2)
+            .max(Comparator.comparing(Snake::getFoodCount));
+    if (maxFoodCountSnake.isPresent()) {
+      return maxFoodCountSnake.get().getSnakeBrain();
+    } else {
+      return chooseParent();
+    }
+  }
+
+  private SnakeBrain chooseDad(List<Snake> snakes) {
+    return snakes.stream()
+            .max(Comparator.comparing(Snake::getLifetime))
+            .map(Snake::getSnakeBrain)
+            .orElseThrow(() -> new IllegalStateException("No matching snake found"));
   }
 
   private SnakeBrain chooseParent() {
