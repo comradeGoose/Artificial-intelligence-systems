@@ -21,11 +21,13 @@ public class Main extends Application {
   private static final int BOARD_WIDTH = 40;
   private static final int BOARD_HEIGHT = 40;
   private static final int TILE_SIZE = 15;
-  private int SPEED = 10;
+  private int SPEED = 2;
 
   private int generation = 0;
-  public int choseN = 5;
   private int Worlds = 20;
+  private int choseN = 3;
+  private int bestN = 3;
+
 
 
   private List<Board> boards;
@@ -95,8 +97,11 @@ public class Main extends Application {
 
   private void spawnNextGeneration() {
     System.out.println("-----------------------Поколение " + generation++);
-            for (Snake snake : findBestSnakes(boards, choseN)) {
-              System.out.println("Lifetime : " + snake.Lifetime  + " | " + "Food : " + snake.FoodCounter + " | " + "Score : " + snake.Score());
+            for (Snake snake : findBestSnakes(boards, bestN)) {
+              System.out.println("Lifetime : " + snake.Lifetime
+                      + " | " + "Food : " + snake.FoodCounter
+                      + " | " + "Stamina : " + snake.Stamina
+                      + " | " + "Score : " + snake.Score());
             }
 
     Selection selection = new Selection(boards.stream().map(Board::getSnake).collect(Collectors.toList()));

@@ -11,7 +11,7 @@ import java.util.concurrent.BrokenBarrierException;
 public class Snake {
 
   private final int _SNAKE_START_LEN_ = 4;
-  private final int _SNAKE_STAMINA_ = 400;
+  private final int _SNAKE_STAMINA_ = 200;
   private final int _SNAKE_STAMINA_RECOVERY_ = 100;
 
   private int speed = 1;
