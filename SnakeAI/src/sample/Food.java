@@ -14,7 +14,6 @@ public class Food {
     int x = RandomNumber.getInt(0, boardWidth);
     int y = RandomNumber.getInt(0, boardHeight);
     position = new Point(x, y);
-//    position = new Point(25, 15);
   }
 
   // Возвращает позицию еды
