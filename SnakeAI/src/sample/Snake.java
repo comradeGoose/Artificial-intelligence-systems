@@ -45,8 +45,6 @@ public class Snake {
     if (Lifetime  == 0 || (Lifetime  == 0 && FoodCounter == 0)) return 1;
 
     return Math.pow(Lifetime, 2) * Math.pow(2, FoodCounter);
-
-//    return FoodCounter * 100 + Lifetime + Stamina;
   }
 
   public int getFoodCount() {
