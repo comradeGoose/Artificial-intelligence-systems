@@ -50,11 +50,14 @@ public class Main extends Application {
 
 
     boards = new LinkedList<Board>();
+    saveBoard = new LinkedList<Board>();
 
     for (int i = 0; i < Worlds; i++) {
       Board board = new Board(BOARD_HEIGHT, BOARD_WIDTH, SPEED);
       boards.add(board);
     }
+
+
 
     new AnimationTimer() {
 
@@ -70,17 +73,22 @@ public class Main extends Application {
 
           if (AllAlive) {
             for (Board board : boards) {
-              if (!board.getSnake().IsAlive) continue;
-              if (!board.getSnake().move()) countAlive--;
+              if (!board.getSnake().move()) {
+                saveBoard.add(board);
+              }
+            }
+            for (Board board : saveBoard) {
+              boards.remove(board);
             }
           }
 
-          if (countAlive == 0) AllAlive = false;
+          if (boards.size() == 0) AllAlive = false;
 
           if (!AllAlive) {
-            countAlive = Worlds;
             spawnNextGeneration();
           }
+
+
           draw(gc);
         }
 
@@ -97,15 +105,15 @@ public class Main extends Application {
   }
 
   private void spawnNextGeneration() {
-    System.out.println("-----------------------ЛУЧШИЕ : " + bestN + " ИЗ ПОКОЛЕНИЯ : " + generation);
-            for (Snake snake : findBestSnakes(boards, bestN)) {
+    System.out.println("-----------------------Поколение " + generation++);
+            for (Snake snake : findBestSnakes(saveBoard, bestN)) {
               System.out.println("Lifetime : " + snake.Lifetime
                       + " | " + "Food : " + snake.FoodCounter
                       + " | " + "Stamina : " + snake.Stamina
                       + " | " + "Score : " + snake.Score());
             }
-//    System.out.println("-----------------------Поколение " + generation++);
-    Selection selection = new Selection(boards.stream().map(Board::getSnake).collect(Collectors.toList()));
+
+    Selection selection = new Selection(saveBoard.stream().map(Board::getSnake).collect(Collectors.toList()));
     boards = Stream.concat(
             selection.choseN(choseN).stream()
                     .map(brain -> new Board(BOARD_HEIGHT, BOARD_WIDTH, SPEED, brain)),
