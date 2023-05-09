@@ -21,18 +21,15 @@ public class Main extends Application {
   private static final int BOARD_WIDTH = 40;
   private static final int BOARD_HEIGHT = 40;
   private static final int TILE_SIZE = 15;
-  private int SPEED = 10;
+  private int SPEED = 5;
 
   private int generation = 0;
   private int Worlds = 100;
-  private int choseN = 3;
+  private int choseN = 0;
   private int bestN = 3;
-
-
+  private int countAlive = Worlds;
 
   private List<Board> boards;
-  private List<Board> saveBoard;
-//  private Board board;
   private Canvas canvas;
   private GraphicsContext gc;
 
@@ -52,7 +49,6 @@ public class Main extends Application {
 
 
     boards = new LinkedList<Board>();
-    saveBoard = new LinkedList<Board>();
 
     for (int i = 0; i < Worlds; i++) {
       Board board = new Board(BOARD_HEIGHT, BOARD_WIDTH, SPEED);
@@ -75,18 +71,16 @@ public class Main extends Application {
 
           if (AllAlive) {
             for (Board board : boards) {
-              if (!board.getSnake().move()) {
-                saveBoard.add(board);
-              }
-            }
-            for (Board board : saveBoard) {
-              boards.remove(board);
+              if (!board.getSnake().IsAlive) continue;
+              if (!board.getSnake().move()) countAlive--;
             }
           }
 
-          if (boards.size() == 0) AllAlive = false;
+          if (countAlive == 0) AllAlive = false;
 
           if (!AllAlive) {
+            System.out.println(countAlive);
+            countAlive = Worlds;
             spawnNextGeneration();
           }
 
@@ -107,15 +101,15 @@ public class Main extends Application {
   }
 
   private void spawnNextGeneration() {
-    System.out.println("-----------------------Поколение " + generation++);
-            for (Snake snake : findBestSnakes(saveBoard, bestN)) {
+    System.out.println("-----------------------ЛУЧШИЕ : " + bestN + " ИЗ ПОКОЛЕНИЯ : " + generation);
+    for (Snake snake : findBestSnakes(boards, bestN)) {
               System.out.println("Lifetime : " + snake.Lifetime
                       + " | " + "Food : " + snake.FoodCounter
                       + " | " + "Stamina : " + snake.Stamina
                       + " | " + "Score : " + snake.Score());
             }
 
-    Selection selection = new Selection(saveBoard.stream().map(Board::getSnake).collect(Collectors.toList()));
+    Selection selection = new Selection(boards.stream().map(Board::getSnake).collect(Collectors.toList()));
     boards = Stream.concat(
             selection.choseN(choseN).stream()
                     .map(brain -> new Board(BOARD_HEIGHT, BOARD_WIDTH, SPEED, brain)),
