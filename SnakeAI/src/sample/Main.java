@@ -21,16 +21,18 @@ public class Main extends Application {
   private static final int BOARD_WIDTH = 40;
   private static final int BOARD_HEIGHT = 40;
   private static final int TILE_SIZE = 15;
-  private int SPEED = 5;
+  private int SPEED = 10;
 
   private int generation = 0;
   private int Worlds = 100;
   private int choseN = 3;
   private int bestN = 3;
 
-  private int countAlive = Worlds;
+
 
   private List<Board> boards;
+  private List<Board> saveBoard;
+//  private Board board;
   private Canvas canvas;
   private GraphicsContext gc;
 

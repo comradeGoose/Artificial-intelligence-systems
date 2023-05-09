@@ -20,4 +20,4 @@
 
 Структура проекта:
 
-
+![](src/sample/resources/struct.jpg)
