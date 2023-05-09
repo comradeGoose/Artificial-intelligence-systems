@@ -29,8 +29,10 @@ public class Selection {
   }
 
   public SnakeBrain spawn() {
-    SnakeBrain mom = chooseMom(snakes);
-    SnakeBrain dad = chooseMom(snakes);
+//    SnakeBrain mom = chooseMom(snakes);
+//    SnakeBrain dad = chooseMom(snakes);
+    SnakeBrain mom = chooseParent();
+    SnakeBrain dad = chooseParent();
     return SnakeBrain.cross(mom, dad);
   }
 
