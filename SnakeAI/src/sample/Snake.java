@@ -32,14 +32,30 @@ public class Snake {
 
   private LinkedList<Point> body;
 
+  /**
+   * Получает голову змеи.
+   *
+   * @return координаты головы змеи
+   */
   public Point Head() {
     return body.getFirst();
   }
 
+  /**
+   * Получает мозг змеи.
+   *
+   * @return SnakeBrain, управляющий данной змеей
+   */
   public SnakeBrain getSnakeBrain() {
     return snakeBrain;
   }
 
+  /**
+   * Возвращает текущий счет змеи.
+   * Счет вычисляется по формуле: Lifetime^2 * 2^FoodCounter.
+   *
+   * @return текущий счет змеи
+   */
   public double Score() {
 
     if (Lifetime  == 0 || (Lifetime  == 0 && FoodCounter == 0)) return 1;
@@ -47,22 +63,49 @@ public class Snake {
     return Math.pow(Lifetime, 2) * Math.pow(2, FoodCounter);
   }
 
+  /**
+   * Получает количество съеденной змеей еды.
+   *
+   * @return количество съеденной змеей еды
+   */
   public int getFoodCount() {
     return FoodCounter;
   }
 
+  /**
+   * Получает количество времени, которое змея находится в игре.
+   *
+   * @return количество времени, которое змея находится в игре
+   */
   public int getLifetime() {
     return Lifetime;
   }
 
+  /**
+   * Получает текущее положение еды на поле.
+   *
+   * @return текущее положение еды на поле
+   */
   public Food getFood() {
     return this.food;
   }
 
+  /**
+   * Получает список координат змеи.
+   *
+   * @return список координат змеи
+   */
   public LinkedList<Point> getBody() {
     return body;
   }
 
+  /**
+   * Конструктор для создания змеи
+   *
+   * @param boardHeight высота игрового поля
+   * @param boardWidth ширина игрового поля
+   * @param speed скорость змеи
+   */
   public Snake(int boardHeight, int boardWidth, int speed) {
 
     this.width = boardWidth;
@@ -82,7 +125,15 @@ public class Snake {
     }
   }
 
-  public Snake(int boardHeight, int boardWidth,int speed, SnakeBrain snakeBrain) {
+  /**
+   * Конструктор для создания змеи с определенным мозгом
+   *
+   * @param boardHeight высота игрового поля
+   * @param boardWidth ширина игрового поля
+   * @param speed скорость змеи
+   * @param snakeBrain мозг змеи
+   */
+  public Snake(int boardHeight, int boardWidth, int speed, SnakeBrain snakeBrain) {
 
     this.width = boardWidth;
     this.height = boardHeight;
@@ -101,6 +152,11 @@ public class Snake {
     }
   }
 
+  /**
+   * Метод для перемещения змеи.
+   *
+   * @return true если змея еще жива, false в противном случае
+   */
   public boolean move() {
     if (!IsAlive) {
       return false;
@@ -145,6 +201,11 @@ public class Snake {
     return true;
   }
 
+  /**
+   * Метод для съедания еды змейкой. Если координаты головы змейки совпадают с координатами еды, то
+   * увеличивается количество еды, восстанавливается выносливость змейки, добавляется одна точка в тело змейки,
+   * создается новая еда на игровом поле.
+   */
   public void eat() {
     if (Head().getX() == getFood().getX() && Head().getY() == getFood().getY()) {
       FoodCounter++;
@@ -155,10 +216,22 @@ public class Snake {
     }
   }
 
+  /**
+   * Метод для установки направления движения змейки.
+   *
+   * @param direction объект Point, содержащий направление движения.
+   */
   public void setDirection(Point direction) {
     this.direction = direction;
   }
 
+  /**
+   * Метод для проверки столкновения змейки со стенами игрового поля и со своим телом.
+   *
+   * @param boardHeight высота игрового поля.
+   * @param boardWidth ширина игрового поля.
+   * @return значение true, если змейка столкнулась со стеной или своим телом, и false в противном случае.
+   */
   public boolean checkCollision(int boardHeight, int boardWidth) {
     Point head = Head();
     if (head.getX() < 0 || head.getX() >= boardWidth || head.getY() < 0 || head.getY() >= boardHeight) {
@@ -172,7 +245,12 @@ public class Snake {
     return false;
   }
 
-  // Собираем информацию о том, насколько близко находятся стены, еда и хвост змейки в каждом из восьми направлений от головы змейки.
+
+  /**
+   * Метод для сбора информации о расстоянии от головы змейки до стен, еды и хвоста змейки в каждом из восьми направлений от головы змейки.
+   *
+   * @return список, содержащий информацию о расстоянии от головы змейки до стен, еды и хвоста змейки в каждом из восьми направлений от головы змейки.
+   */
     private LinkedList<Float> gatherObservations() {
     LinkedList<Float> observations = new LinkedList<>();
     for (Point dir : Point.EIGHT_DIRECTIONS) {
@@ -183,10 +261,12 @@ public class Snake {
     return observations;
   }
 
-  // Принимаем направление и определяем, насколько близко находится ближайшая стена в этом направлении.
-  // Начинаем с шага 1 и последовательно увеличиваем шаг на 1, проверяя, находится ли точка на расстоянии i в данном
-  // направлении от головы змейки в пределах границ игрового поля. Как только точка достигает границы, метод возвращает
-  // обратную величину текущего шага (1 / i), что означает, что стена находится на расстоянии i от головы змейки.
+  /**
+   * Определяет, насколько близко находится стена в направлении dir.
+   *
+   * @param dir направление, в котором нужно определить ближайшую стену
+   * @return обратную величину текущего шага (1 / i), если стена находится на расстоянии i от головы змейки, иначе 0
+   */
   private float inverseDistanceToWall(Point dir) {
     for (int i = 1; true; i++) {
       if (!dir.contains(Head().add(dir.multiply(i)), width, height)) {
@@ -198,7 +278,12 @@ public class Snake {
     }
   }
 
-  // также принимает направление и определяет, насколько близко находится ближайшая еда в этом направлении.
+  /**
+   * Определяет, насколько близко находится еда в направлении dir.
+   *
+   * @param dir направление, в котором происходит поиск
+   * @return обратная величина шага, на котором была найдена ближайшая еда в заданном направлении. Если еда не найдена, возвращает 0.
+   */
   private float inverseDistanceToFood(Point dir) {
     for (int i = 1; true; i++) {
       if (!dir.contains(Head().add(dir.multiply(i)), width, height)) {
@@ -209,7 +294,12 @@ public class Snake {
     }
   }
 
-  // также принимает направление и определяет, насколько близко находится ближайший хвост змейки в этом направлении.
+  /**
+   * Определяет, насколько близко находится ближайший хвост змейки в направлении dir.
+   *
+   * @param dir направление, в котором производится поиск ближайшего хвоста.
+   * @return 0, если в данном направлении нет хвоста змейки, или обратная величина текущего шага (1 / i), на котором хвост был найден, если он есть.
+   */
   private float inverseDistanceToTail(Point dir) {
     for (int i = 1; true; i++) {
       if (!dir.contains(Head().add(dir.multiply(i)), width, height)) {
